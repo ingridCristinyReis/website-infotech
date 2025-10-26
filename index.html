@@ -25,7 +25,7 @@
       <button type="submit">log in</button>
 
       <div class="links">
-        <p><a href="#">Crie uma conta</a> | <a href="#">Esqueceu sua senha?</a></p>
+        <p><a href="cadastro.html">Crie uma conta</a> | <a href="#">Esqueceu sua senha?</a></p>
       </div>
     </form>
 
@@ -39,7 +39,21 @@
   </div>
 </div>
 
-  </div>
 
 </body>
+  <script>
+  function mostrarErro() {
+    const feedback = document.getElementById("feedback");
+    feedback.classList.add("show");
+  }
+  function esconderErro() {
+    const feedback = document.getElementById("feedback");
+    feedback.classList.remove("show");
+  }
+  document.querySelector("form").addEventListener("submit", function(e) {
+    e.preventDefault(); 
+    mostrarErro();
+  });
+</script>
+
 </html>

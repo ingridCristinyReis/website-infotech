@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>InfoTech - Login / Register</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-bg">
+    <div class="card">
+      <div class="left-panel">
+        <div class="left-inner">
+          <div class="logo">INFOTECH</div>
+          <h1 class="welcome">Bem-vindo de volta</h1>
+          <button class="btn login-btn">log in</button>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="right-inner">
+          <h2 class="title">Criar nova conta</h2>
+
+          <form id="registerForm" novalidate>
+            <input type="text" name="name" placeholder="Nome completo" required />
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Senha" required />
+            <input type="password" name="confirm" placeholder="Confirmar senha" required />
+
+            <p id="registerFeedback" class="feedback">As senhas não conferem.</p>
+
+            <button type="submit" class="btn register-btn">Cadastrar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Exemplo simples: validar se as senhas conferem e mostrar feedback
+    const form = document.getElementById('registerForm');
+    const feedback = document.getElementById('registerFeedback');
+
+    feedback.style.display = 'none'; 
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const pwd = form.password.value.trim();
+      const conf = form.confirm.value.trim();
+
+      if (!pwd || !conf) {
+        feedback.textContent = 'Preencha as senhas.';
+        feedback.style.display = 'block';
+        return;
+      }
+
+      if (pwd !== conf) {
+        feedback.textContent = 'As senhas não conferem.';
+        feedback.style.display = 'block';
+        return;
+      }
+
+      
+      feedback.style.display = 'none';
+      alert('Cadastro validado (aqui você chamaria a API).');
+      form.reset();
+    });
+  </script>
+</body>
+</html>
