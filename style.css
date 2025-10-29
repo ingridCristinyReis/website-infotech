@@ -230,6 +230,24 @@ body {
         border-radius: 6px;
         font-size: 12px;
     }
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .divider hr {
+      width: 40%;
+      border: 0;
+      border-top: 1px solid #aaa;
+    }
+
+    .divider span {
+      margin: 0 10px;
+      color: #ccc;
+      font-size: 13px;
+    }
 @media (max-width: 760px) {
   .card {
     flex-direction: column;

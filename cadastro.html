@@ -3,33 +3,67 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>InfoTech - Login / Register</title>
+  <title>InfoTech - Cadastro</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .lang-switch {
+      position: fixed;
+      top: 15px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      width: 10%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .lang-switch:hover {
+      background: rgba(0, 255, 170, 0.25);
+      transform: scale(1.05);
+    }
+    .lang-switch span {
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
+  <!-- Botão para mudar idioma -->
+  <button class="lang-switch" onclick="toggleLanguage()">
+    <span>🌐</span> PT-BR
+  </button>
+
   <div class="page-bg">
     <div class="card">
       <div class="left-panel">
         <div class="left-inner">
           <div class="logo">INFOTECH</div>
-          <h1 class="welcome">Bem-vindo de volta</h1>
-          <button class="btn login-btn">log in</button>
+          <h1 class="welcome" data-i18n="Bem-vindo de volta">Bem-vindo de volta</h1>
+          <button class="btn login-btn" onclick="window.location.href='index.html'" data-i18n="log in">log in</button>
         </div>
       </div>
 
       <div class="right-panel">
         <div class="right-inner">
-          <h2 class="title">Criar nova conta</h2>
+          <h2 class="title" data-i18n="Criar nova conta">Criar nova conta</h2>
 
           <form id="registerForm" novalidate>
-            <input type="text" name="name" placeholder="Nome completo" required />
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Senha" required />
-            <input type="password" name="confirm" placeholder="Confirmar senha" required />
+            <input type="text" name="name" placeholder="Nome completo" required data-i18n-placeholder="Nome completo" />
+            <input type="email" name="email" placeholder="Email" required data-i18n-placeholder="Email" />
+            <input type="password" name="password" placeholder="Senha" required data-i18n-placeholder="Senha" />
+            <input type="password" name="confirm" placeholder="Confirmar senha" required data-i18n-placeholder="Confirmar senha" />
 
-            <p id="registerFeedback" class="feedback">As senhas não conferem.</p>
+            <p id="registerFeedback" class="feedback" data-i18n="As senhas não conferem.">As senhas não conferem.</p>
 
-            <button type="submit" class="btn register-btn">Cadastrar</button>
+            <button type="submit" class="btn register-btn" data-i18n="Cadastrar">Cadastrar</button>
           </form>
         </div>
       </div>
@@ -37,7 +71,49 @@
   </div>
 
   <script>
-    // Exemplo simples: validar se as senhas conferem e mostrar feedback
+    // ===== Tradução =====
+    let lang = "pt";
+
+    async function translateText(text, targetLang) {
+      if (targetLang === "pt") return text; // evita erro pt|pt
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.responseData.translatedText || text;
+      } catch (e) {
+        console.error("Erro de tradução:", e);
+        return text;
+      }
+    }
+
+    async function translatePage(targetLang) {
+      const elements = document.querySelectorAll("[data-i18n]");
+      for (const el of elements) {
+        const original = el.getAttribute("data-i18n");
+        el.textContent = await translateText(original, targetLang);
+      }
+
+      const inputs = document.querySelectorAll("[data-i18n-placeholder]");
+      for (const input of inputs) {
+        const original = input.getAttribute("data-i18n-placeholder");
+        input.placeholder = await translateText(original, targetLang);
+      }
+    }
+
+    function toggleLanguage() {
+      const btn = document.querySelector(".lang-switch");
+      if (lang === "pt") {
+        lang = "en";
+        btn.innerHTML = "<span>🌐</span> EN";
+      } else {
+        lang = "pt";
+        btn.innerHTML = "<span>🌐</span> PT-BR";
+      }
+      translatePage(lang);
+    }
+
+    // ===== Validação do formulário =====
     const form = document.getElementById('registerForm');
     const feedback = document.getElementById('registerFeedback');
 
@@ -49,20 +125,19 @@
       const conf = form.confirm.value.trim();
 
       if (!pwd || !conf) {
-        feedback.textContent = 'Preencha as senhas.';
+        feedback.textContent = (lang === "pt") ? "Preencha as senhas." : "Fill in the passwords.";
         feedback.style.display = 'block';
         return;
       }
 
       if (pwd !== conf) {
-        feedback.textContent = 'As senhas não conferem.';
+        feedback.textContent = (lang === "pt") ? "As senhas não conferem." : "Passwords do not match.";
         feedback.style.display = 'block';
         return;
       }
 
-      
       feedback.style.display = 'none';
-      alert('Cadastro validado (aqui você chamaria a API).');
+      alert(lang === "pt" ? "Cadastro validado (aqui você chamaria a API)." : "Registration validated (here you would call the API).");
       form.reset();
     });
   </script>

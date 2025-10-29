@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InfoTech - Relatórios</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background-size: cover;
+      color: white;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: rgba(30,41,59,0.95);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+    }
+
+    .sidebar h2 {
+      margin: 0 0 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 10px 0;
+    }
+
+    .sidebar ul li a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+      background: #334155;
+    }
+
+    .settings {
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      padding-top: 10px;
+    }
+
+    .settings a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+    }
+
+    /* Conteúdo */
+    .content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h1 { margin-bottom: 10px; }
+
+    .charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-box canvas {
+  max-height: 250px;   
+  width: 100% !important;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(0,0,0,0.6);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+table th, table td {
+  padding: 8px;
+  text-align: center;
+}
+
+.table-wrapper {
+  overflow-x: auto;  
+}
+
+
+@media (max-width: 1024px) {
+  .charts {
+    grid-template-columns: 1fr;  
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    align-items: center;
+  }
+  .sidebar ul {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-box {
+    padding: 10px;
+  }
+  table {
+    font-size: 12px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>INFOTECH</h2>
+    <ul>
+      <li><a href="painel.html">Painel Dashboard</a></li>
+      <li><a href="chamados.html">Chamados</a></li>
+      <li><a href="relatorios.html" style="background:#334155;">Relatórios</a></li>
+      <li><a href="tecnico.html">Técnicos</a></li>
+      <li><a href="#">Ajuda</a></li>
+    </ul>
+    <div class="settings">
+      <a href="#" onclick="toggleLanguage()">🌐 <span data-i18n="Mudar idioma">Mudar idioma</span></a>
+      <a href="index.html" data-i18n="Encerrar sessão">Encerrar sessão</a>
+    </div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="content">
+    <h1 data-i18n="Relatórios">Relatórios</h1>
+    <p data-i18n="É possível visualizar relatórios sobre o sistema.">É possível visualizar relatórios sobre o sistema.</p>
+
+    <div class="charts">
+      <div class="chart-box">
+        <h3 data-i18n="Média de chamados do mês de Maio">Média de chamados do mês de Maio</h3>
+        <canvas id="chartMedia"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3 data-i18n="Taxa de satisfação do mês de Abril">Taxa de satisfação do mês de Abril</h3>
+        <canvas id="chartSatisfacao"></canvas>
+      </div>
+    </div>
+
+    <div class="charts">
+      <div class="chart-box">
+        <h3 data-i18n="Chamados do mês de Abril">Chamados do mês de Abril</h3>
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="Categoria">Categoria</th>
+              <th data-i18n="Quantidade">Quantidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td data-i18n="Redes">Redes</td><td>103</td></tr>
+            <tr><td data-i18n="Software">Software</td><td>136</td></tr>
+            <tr><td data-i18n="Hardware">Hardware</td><td>127</td></tr>
+            <tr><td data-i18n="Segurança">Segurança</td><td>126</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-box">
+        <h3 data-i18n="Taxa de satisfação detalhada">Taxa de satisfação detalhada</h3>
+        <table>
+          <thead>
+            <tr>
+              <th data-i18n="Categoria">Categoria</th>
+              <th data-i18n="Taxa de satisfação">Taxa de satisfação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td data-i18n="Redes">Redes</td><td>84%</td></tr>
+            <tr><td data-i18n="Software">Software</td><td>90%</td></tr>
+            <tr><td data-i18n="Hardware">Hardware</td><td>72%</td></tr>
+            <tr><td data-i18n="Segurança">Segurança</td><td>90%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Gráfico de média de chamados
+    const ctxMedia = document.getElementById('chartMedia');
+    new Chart(ctxMedia, {
+      type: 'bar',
+      data: {
+        labels: ['Rede', 'Software', 'Hardware', 'Segurança', 'Suporte'],
+        datasets: [{
+          label: 'Chamados',
+          data: [30, 50, 40, 25, 20],
+          backgroundColor: ['#facc15','#3b82f6','#22c55e','#ef4444','#a855f7']
+        }]
+      }
+    });
+
+    // Gráfico de satisfação
+    const ctxSat = document.getElementById('chartSatisfacao');
+    new Chart(ctxSat, {
+      type: 'pie',
+      data: {
+        labels: ['Redes', 'Software', 'Hardware', 'Segurança'],
+        datasets: [{
+          data: [84, 90, 72, 90],
+          backgroundColor: ['#facc15','#3b82f6','#22c55e','#ef4444']
+        }]
+      }
+    });
+
+    // Tradução
+    let lang = "pt";
+    async function translateText(text, targetLang) {
+      if (targetLang === "pt") return text;
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.responseData.translatedText || text;
+      } catch {
+        return text;
+      }
+    }
+
+    async function translatePage(targetLang) {
+      const elements = document.querySelectorAll("[data-i18n]");
+      for (const el of elements) {
+        const original = el.getAttribute("data-i18n");
+        el.textContent = await translateText(original, targetLang);
+      }
+    }
+
+    function toggleLanguage() {
+      lang = lang === "pt" ? "en" : "pt";
+      translatePage(lang);
+    }
+  </script>
+</body>
+</html>

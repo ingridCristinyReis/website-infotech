@@ -5,55 +5,129 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - InfoTech</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .lang-switch {
+      position: fixed;
+      top: 15px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      width: 10%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .lang-switch:hover {
+      background: rgba(0, 255, 170, 0.25);
+      transform: scale(1.05);
+    }
+    .lang-switch span {
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
+  <!-- Botão para mudar idioma -->
+  <button class="lang-switch" onclick="toggleLanguage()">
+    <span>🌐</span> PT-BR
+  </button>
 
   <div class="login-container">
-    <h2>Login</h2>
-    <p class="subtitle">Faça login para continuar</p>
+    <h2 id="loginTitle" data-i18n="Login">Login</h2>
+    <p class="subtitle" id="loginSubtitle" data-i18n="Faça login para continuar">Faça login para continuar</p>
 
     <form>
-      <input type="text" placeholder="usuario@gmail.com" required>
-      <input type="password" placeholder="********" required>
+      <input type="text" placeholder="usuario@gmail.com" required data-i18n-placeholder="usuario@gmail.com">
+      <input type="password" placeholder="********" required data-i18n-placeholder="********">
 
-      <p class="feedback">NÃO FOI POSSÍVEL ENCONTRAR UMA CONTA INFOTECH. TENTE INSERIR SEUS DETALHES NOVAMENTE OU CRIE UMA CONTA.</p>
+      <p class="feedback" data-i18n="NÃO FOI POSSÍVEL ENCONTRAR UMA CONTA INFOTECH. TENTE INSERIR SEUS DETALHES NOVAMENTE OU CRIE UMA CONTA.">
+        NÃO FOI POSSÍVEL ENCONTRAR UMA CONTA INFOTECH. TENTE INSERIR SEUS DETALHES NOVAMENTE OU CRIE UMA CONTA.
+      </p>
 
       <label>
-        <input type="checkbox"> Manter login
+        <input type="checkbox" id="keepLogin"> 
+        <span data-i18n="Manter login">Manter login</span>
       </label>
 
-      <button type="submit">log in</button>
+      <button type="submit" id="loginButton" data-i18n="log in" onclick="window.location.href='painel.html'">log in</button>
 
       <div class="links">
-        <p><a href="cadastro.html">Crie uma conta</a> | <a href="#">Esqueceu sua senha?</a></p>
+        <p>
+          <a href="cadastro.html" id="createAccount" data-i18n="Crie uma conta">Crie uma conta</a> |
+          <a href="forgotPass.html" id="forgotPassword" data-i18n="Esqueceu sua senha?">Esqueceu sua senha?</a>
+        </p>
       </div>
     </form>
 
     <div class="infotech">
-  <div class="info">
-    <i class="fa-solid fa-microchip"></i>
-    <span>INFO</span>
+      <div class="info"><i class="fa-solid fa-microchip"></i><span>INFO</span></div>
+      <div class="tech"><span>TECH</span></div>
+    </div>
   </div>
-  <div class="tech">
-    <span>TECH</span>
-  </div>
-</div>
 
-
-</body>
   <script>
-  function mostrarErro() {
-    const feedback = document.getElementById("feedback");
-    feedback.classList.add("show");
+  let lang = "pt";
+
+  // Função para traduzir texto via MyMemory
+  async function translateText(text, targetLang) {
+    // ⚠️ Se o destino for PT, devolve o original (evita erro "two distinct languages")
+    if (targetLang === "pt") {
+      return text;
+    }
+
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.responseData.translatedText || text;
+    } catch (e) {
+      console.error("Erro ao traduzir:", e);
+      return text;
+    }
   }
-  function esconderErro() {
-    const feedback = document.getElementById("feedback");
-    feedback.classList.remove("show");
+
+  // Traduz elementos com data-i18n e placeholders
+  async function translatePage(targetLang) {
+    const elements = document.querySelectorAll("[data-i18n]");
+    for (const el of elements) {
+      const original = el.getAttribute("data-i18n");
+      el.textContent = await translateText(original, targetLang);
+    }
+
+    const inputs = document.querySelectorAll("[data-i18n-placeholder]");
+    for (const input of inputs) {
+      const original = input.getAttribute("data-i18n-placeholder");
+      input.placeholder = await translateText(original, targetLang);
+    }
   }
+
+  function toggleLanguage() {
+    const btn = document.querySelector(".lang-switch");
+    if (lang === "pt") {
+      lang = "en";
+      btn.innerHTML = "<span>🌐</span> EN";
+    } else {
+      lang = "pt";
+      btn.innerHTML = "<span>🌐</span> PT-BR";
+    }
+    translatePage(lang);
+  }
+
+  // Mostrar erro ao submeter
   document.querySelector("form").addEventListener("submit", function(e) {
     e.preventDefault(); 
-    mostrarErro();
+    document.querySelector(".feedback").classList.add("show");
   });
 </script>
 
+</body>
 </html>
