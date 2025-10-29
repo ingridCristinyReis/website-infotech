@@ -1,8 +1,5 @@
 # Website Infotech
 
-## Integrante
- - Ingrid Cristini dos Reis - R195HB7
-
 ## 🎯 Sobre o projeto  
 Este repositório contém o site “Infotech”, desenvolvido por Ingrid Cristiny Reis.  
 O objetivo é oferecer uma página web responsiva com seções de cadastro, apresentação e estilo personalizado.  
