@@ -71,75 +71,106 @@
   </div>
 
   <script>
-    // ===== Tradução =====
-    let lang = "pt";
+  // ===== Tradução =====
+  let lang = "pt";
 
-    async function translateText(text, targetLang) {
-      if (targetLang === "pt") return text; // evita erro pt|pt
-      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data.responseData.translatedText || text;
-      } catch (e) {
-        console.error("Erro de tradução:", e);
-        return text;
-      }
+  async function translateText(text, targetLang) {
+    if (targetLang === "pt") return text;
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.responseData.translatedText || text;
+    } catch (e) {
+      console.error("Erro de tradução:", e);
+      return text;
+    }
+  }
+
+  async function translatePage(targetLang) {
+    const elements = document.querySelectorAll("[data-i18n]");
+    for (const el of elements) {
+      const original = el.getAttribute("data-i18n");
+      el.textContent = await translateText(original, targetLang);
     }
 
-    async function translatePage(targetLang) {
-      const elements = document.querySelectorAll("[data-i18n]");
-      for (const el of elements) {
-        const original = el.getAttribute("data-i18n");
-        el.textContent = await translateText(original, targetLang);
-      }
+    const inputs = document.querySelectorAll("[data-i18n-placeholder]");
+    for (const input of inputs) {
+      const original = input.getAttribute("data-i18n-placeholder");
+      input.placeholder = await translateText(original, targetLang);
+    }
+  }
 
-      const inputs = document.querySelectorAll("[data-i18n-placeholder]");
-      for (const input of inputs) {
-        const original = input.getAttribute("data-i18n-placeholder");
-        input.placeholder = await translateText(original, targetLang);
-      }
+  function toggleLanguage() {
+    const btn = document.querySelector(".lang-switch");
+    if (lang === "pt") {
+      lang = "en";
+      btn.innerHTML = "<span>🌐</span> EN";
+    } else {
+      lang = "pt";
+      btn.innerHTML = "<span>🌐</span> PT-BR";
+    }
+    translatePage(lang);
+  }
+
+  // ===== Formulário =====
+  const form = document.getElementById("registerForm");
+  const feedback = document.getElementById("registerFeedback");
+  feedback.style.display = "none";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const nome = form.name.value.trim();
+    const email = form.email.value.trim();
+    const senha = form.password.value.trim();
+    const confirmar = form.confirm.value.trim();
+
+    if (!senha || !confirmar) {
+      feedback.textContent = lang === "pt" ? "Preencha as senhas." : "Fill in the passwords.";
+      feedback.style.display = "block";
+      return;
     }
 
-    function toggleLanguage() {
-      const btn = document.querySelector(".lang-switch");
-      if (lang === "pt") {
-        lang = "en";
-        btn.innerHTML = "<span>🌐</span> EN";
+    if (senha !== confirmar) {
+      feedback.textContent = lang === "pt" ? "As senhas não conferem." : "Passwords do not match.";
+      feedback.style.display = "block";
+      return;
+    }
+
+    feedback.style.display = "none";
+
+    // ====== Envio para API ======
+    const usuario = {
+      nome: nome,
+      nomeUsuario: email.split("@")[0],
+      email: email,
+      senha: senha,
+      funcao: "Usuário",
+      setor: "TI",
+      matricula: Math.floor(Math.random() * 999999).toString().padStart(6, "0"),
+    };
+
+    try {
+      const response = await fetch("http://localhost:5018/api/Usuarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usuario),
+      });
+
+      if (response.ok) {
+        alert(lang === "pt" ? "Usuário cadastrado com sucesso!" : "User registered successfully!");
+        form.reset();
+        window.location.href = "index.html";
       } else {
-        lang = "pt";
-        btn.innerHTML = "<span>🌐</span> PT-BR";
+        const msg = await response.text();
+        alert(lang === "pt" ? `Erro ao cadastrar: ${msg}` : `Error while registering: ${msg}`);
       }
-      translatePage(lang);
+    } catch (error) {
+      console.error("Erro:", error);
+      alert(lang === "pt" ? "Falha ao conectar com a API." : "Failed to connect to the API.");
     }
+  });
+</script>
 
-    // ===== Validação do formulário =====
-    const form = document.getElementById('registerForm');
-    const feedback = document.getElementById('registerFeedback');
-
-    feedback.style.display = 'none'; 
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const pwd = form.password.value.trim();
-      const conf = form.confirm.value.trim();
-
-      if (!pwd || !conf) {
-        feedback.textContent = (lang === "pt") ? "Preencha as senhas." : "Fill in the passwords.";
-        feedback.style.display = 'block';
-        return;
-      }
-
-      if (pwd !== conf) {
-        feedback.textContent = (lang === "pt") ? "As senhas não conferem." : "Passwords do not match.";
-        feedback.style.display = 'block';
-        return;
-      }
-
-      feedback.style.display = 'none';
-      alert(lang === "pt" ? "Cadastro validado (aqui você chamaria a API)." : "Registration validated (here you would call the API).");
-      form.reset();
-    });
-  </script>
 </body>
 </html>

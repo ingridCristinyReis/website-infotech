@@ -33,6 +33,13 @@
     .lang-switch span {
       font-size: 14px;
     }
+    .feedback {
+      display: none;
+      color: #ff5a5a;
+      font-weight: 500;
+      margin-top: 8px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -45,11 +52,11 @@
     <h2 id="loginTitle" data-i18n="Login">Login</h2>
     <p class="subtitle" id="loginSubtitle" data-i18n="Faça login para continuar">Faça login para continuar</p>
 
-    <form>
-      <input type="text" placeholder="usuario@gmail.com" required data-i18n-placeholder="usuario@gmail.com">
-      <input type="password" placeholder="********" required data-i18n-placeholder="********">
+    <form id="loginForm" novalidate>
+      <input type="text" id="email" placeholder="usuario@gmail.com" required data-i18n-placeholder="usuario@gmail.com">
+      <input type="password" id="senha" placeholder="********" required data-i18n-placeholder="********">
 
-      <p class="feedback" data-i18n="NÃO FOI POSSÍVEL ENCONTRAR UMA CONTA INFOTECH. TENTE INSERIR SEUS DETALHES NOVAMENTE OU CRIE UMA CONTA.">
+      <p id="feedback" class="feedback" data-i18n="NÃO FOI POSSÍVEL ENCONTRAR UMA CONTA INFOTECH. TENTE INSERIR SEUS DETALHES NOVAMENTE OU CRIE UMA CONTA.">
         NÃO FOI POSSÍVEL ENCONTRAR UMA CONTA INFOTECH. TENTE INSERIR SEUS DETALHES NOVAMENTE OU CRIE UMA CONTA.
       </p>
 
@@ -58,12 +65,12 @@
         <span data-i18n="Manter login">Manter login</span>
       </label>
 
-      <button type="submit" id="loginButton" data-i18n="log in" onclick="window.location.href='painel.html'">log in</button>
+      <button type="submit" id="loginButton" data-i18n="Entrar">Entrar</button>
 
       <div class="links">
         <p>
-          <a href="cadastro.html" id="createAccount" data-i18n="Crie uma conta">Crie uma conta</a> |
-          <a href="forgotPass.html" id="forgotPassword" data-i18n="Esqueceu sua senha?">Esqueceu sua senha?</a>
+          <a href="cadastro.html" data-i18n="Crie uma conta">Crie uma conta</a> |
+          <a href="forgotPass.html" data-i18n="Esqueceu sua senha?">Esqueceu sua senha?</a>
         </p>
       </div>
     </form>
@@ -75,15 +82,103 @@
   </div>
 
   <script>
-  let lang = "pt";
+  // 🧹 Impede login automático se vier de logout
+  if (localStorage.getItem("forceLogout") === "true") {
+    localStorage.clear(); // limpa tudo
+    console.log("Logout detectado — sessão reiniciada.");
+  }
 
-  // Função para traduzir texto via MyMemory
-  async function translateText(text, targetLang) {
-    // ⚠️ Se o destino for PT, devolve o original (evita erro "two distinct languages")
-    if (targetLang === "pt") {
-      return text;
+  const form = document.getElementById("loginForm");
+  const feedback = document.getElementById("feedback");
+  const keepLoginCheckbox = document.getElementById("keepLogin");
+
+  // ======= Carrega automaticamente o usuário salvo =======
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedUser = JSON.parse(localStorage.getItem("usuario"));
+    const keepLogin = localStorage.getItem("keepLogin");
+
+    // Se o "manter login" estiver ativo e houver usuário salvo, pula direto pro painel
+    if (keepLogin === "true" && savedUser) {
+      alert("Login automático bem-sucedido!");
+      window.location.href = "painel.html";
+      return;
     }
 
+    // Se só o email foi salvo (lembrar sem login automático), preenche o campo
+    if (savedUser?.email) {
+      document.getElementById("email").value = savedUser.email;
+    }
+  });
+
+  // ======= Evento de login =======
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
+    feedback.style.display = "none";
+
+    if (!email || !senha) {
+      feedback.textContent = "Preencha todos os campos.";
+      feedback.style.display = "block";
+      return;
+    }
+
+    try {
+      // 🔹 Faz o POST para sua API ASP.NET
+      const response = await fetch("http://localhost:5018/api/Usuarios/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: senha
+        })
+      });
+
+      if (response.ok) {
+  const data = await response.json();
+
+  // 🔹 Garante que o backend realmente devolveu o usuário
+  const usuarioLogado = {
+    id: data.user?.idFunc || data.user?.idUsuario || data.idFunc || data.idUsuario || null,
+    email: email,
+    nome: data.user?.nomeUsuario || data.nomeUsuario || "",
+    funcao: data.user?.funcao || data.funcao || ""
+  };
+
+  if (!usuarioLogado.id) {
+    console.warn("⚠ Nenhum ID encontrado na resposta do login:", data);
+  }
+
+  // 🔸 Se o usuário marcou “Manter login” → usa localStorage
+  if (keepLoginCheckbox.checked) {
+    localStorage.setItem("usuario", JSON.stringify(usuarioLogado));
+    localStorage.setItem("keepLogin", "true");
+  } else {
+    // 🔹 Login temporário (expira ao fechar aba)
+    feedback.textContent = "Erro ao conectar ao servidor.";
+    feedback.style.display = "block";
+    sessionStorage.setItem("usuario", JSON.stringify(usuarioLogado));
+  }
+
+  alert("Login realizado com sucesso!");
+  window.location.href = "painel.html";
+}
+
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      feedback.textContent = "Falha ao se conectar à API.";
+      feedback.style.display = "block";
+    }
+  });
+
+  // ======= Sistema de tradução =======
+  let lang = "pt";
+
+  async function translateText(text, targetLang) {
+    if (targetLang === "pt") return text;
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
     try {
       const response = await fetch(url);
@@ -95,7 +190,6 @@
     }
   }
 
-  // Traduz elementos com data-i18n e placeholders
   async function translatePage(targetLang) {
     const elements = document.querySelectorAll("[data-i18n]");
     for (const el of elements) {
@@ -121,13 +215,8 @@
     }
     translatePage(lang);
   }
-
-  // Mostrar erro ao submeter
-  document.querySelector("form").addEventListener("submit", function(e) {
-    e.preventDefault(); 
-    document.querySelector(".feedback").classList.add("show");
-  });
 </script>
+
 
 </body>
 </html>
