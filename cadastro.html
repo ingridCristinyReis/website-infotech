@@ -2,175 +2,458 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>InfoTech - Cadastro</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f1f5f9;
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    /* Animated background */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -200px;
+      right: -200px;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -150px;
+      left: -150px;
+      animation: float 15s infinite ease-in-out reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(50px, 50px); }
+    }
+
+    /* Language switch */
     .lang-switch {
       position: fixed;
-      top: 15px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 4px 10px;
-      font-size: 12px;
+      top: 20px;
+      right: 20px;
+      background: rgba(30,41,59,0.8);
+      backdrop-filter: blur(10px);
+      color: #cbd5e1;
+      border: 1px solid rgba(56,189,248,0.3);
+      border-radius: 24px;
+      padding: 10px 18px;
+      font-size: 14px;
       font-weight: 500;
-      width: 10%;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
       transition: all 0.3s ease;
       z-index: 1000;
     }
+
     .lang-switch:hover {
-      background: rgba(0, 255, 170, 0.25);
-      transform: scale(1.05);
+      background: rgba(56,189,248,0.15);
+      border-color: #38bdf8;
+      color: #38bdf8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56,189,248,0.2);
     }
-    .lang-switch span {
-      font-size: 14px;
+
+    /* Card container */
+    .card {
+      background: rgba(30,41,59,0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      position: relative;
+      z-index: 10;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Left panel */
+    .left-panel {
+      background: linear-gradient(135deg, rgba(56,189,248,0.2) 0%, rgba(14,165,233,0.1) 100%);
+      padding: 48px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 24px;
+      letter-spacing: 2px;
+    }
+
+    .welcome {
+      font-size: 28px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .login-btn {
+      margin-top: 24px;
+      background: transparent;
+      border: 2px solid #38bdf8;
+      color: #38bdf8;
+      padding: 12px 40px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: #38bdf8;
+      color: #0f172a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56,189,248,0.4);
+    }
+
+    /* Right panel */
+    .right-panel {
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    /* Form */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: #f1f5f9;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #38bdf8;
+      background: rgba(15,23,42,0.8);
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.15);
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+      color: #0f172a;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(56,189,248,0.3);
+      margin-top: 8px;
+    }
+
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(56,189,248,0.4);
+    }
+
+    .register-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Feedback */
+    .feedback {
+      display: none;
+      color: #f87171;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .card {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+      }
+
+      .left-panel {
+        padding: 32px 24px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+
+      .welcome {
+        font-size: 24px;
+      }
+
+      .right-panel {
+        padding: 32px 24px;
+      }
+
+      .title {
+        font-size: 24px;
+      }
+
+      .lang-switch {
+        top: 12px;
+        right: 12px;
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+
+      .card {
+        border-radius: 16px;
+      }
+
+      .left-panel,
+      .right-panel {
+        padding: 24px 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Botão para mudar idioma -->
+  <!-- Language switch -->
   <button class="lang-switch" onclick="toggleLanguage()">
-    <span>🌐</span> PT-BR
+    <span>🌐</span> <span id="langText">PT-BR</span>
   </button>
 
-  <div class="page-bg">
-    <div class="card">
-      <div class="left-panel">
-        <div class="left-inner">
-          <div class="logo">INFOTECH</div>
-          <h1 class="welcome" data-i18n="Bem-vindo de volta">Bem-vindo de volta</h1>
-          <button class="btn login-btn" onclick="window.location.href='index.html'" data-i18n="log in">log in</button>
-        </div>
-      </div>
+  <div class="card">
+    <!-- Left panel -->
+    <div class="left-panel">
+      <div class="logo">💻 INFOTECH</div>
+      <h1 class="welcome" data-i18n="Bem-vindo de volta">Bem-vindo de volta</h1>
+      <p style="color: #94a3b8; font-size: 15px; margin-top: 8px;">Já tem uma conta?</p>
+      <button class="login-btn" onclick="window.location.href='index.html'" data-i18n="Fazer login">Fazer login</button>
+    </div>
 
-      <div class="right-panel">
-        <div class="right-inner">
-          <h2 class="title" data-i18n="Criar nova conta">Criar nova conta</h2>
+    <!-- Right panel -->
+    <div class="right-panel">
+      <h2 class="title" data-i18n="Criar nova conta">Criar nova conta</h2>
 
-          <form id="registerForm" novalidate>
-            <input type="text" name="name" placeholder="Nome completo" required data-i18n-placeholder="Nome completo" />
-            <input type="email" name="email" placeholder="Email" required data-i18n-placeholder="Email" />
-            <input type="password" name="password" placeholder="Senha" required data-i18n-placeholder="Senha" />
-            <input type="password" name="confirm" placeholder="Confirmar senha" required data-i18n-placeholder="Confirmar senha" />
+      <form id="registerForm" novalidate>
+        <input 
+          type="text" 
+          name="name" 
+          placeholder="Nome completo" 
+          required 
+          data-i18n-placeholder="Nome completo"
+        />
+        
+        <input 
+          type="email" 
+          name="email" 
+          placeholder="Email" 
+          required 
+          data-i18n-placeholder="Email"
+        />
+        
+        <input 
+          type="password" 
+          name="password" 
+          placeholder="Senha" 
+          required 
+          data-i18n-placeholder="Senha"
+        />
+        
+        <input 
+          type="password" 
+          name="confirm" 
+          placeholder="Confirmar senha" 
+          required 
+          data-i18n-placeholder="Confirmar senha"
+        />
 
-            <p id="registerFeedback" class="feedback" data-i18n="As senhas não conferem.">As senhas não conferem.</p>
+        <p id="registerFeedback" class="feedback" data-i18n="As senhas não conferem.">
+          As senhas não conferem.
+        </p>
 
-            <button type="submit" class="btn register-btn" data-i18n="Cadastrar">Cadastrar</button>
-          </form>
-        </div>
-      </div>
+        <button type="submit" class="register-btn" data-i18n="Cadastrar">Cadastrar</button>
+      </form>
     </div>
   </div>
 
   <script>
-  // ===== Tradução =====
-  let lang = "pt";
+    // Tradução
+    let lang = "pt";
 
-  async function translateText(text, targetLang) {
-    if (targetLang === "pt") return text;
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data.responseData.translatedText || text;
-    } catch (e) {
-      console.error("Erro de tradução:", e);
-      return text;
-    }
-  }
-
-  async function translatePage(targetLang) {
-    const elements = document.querySelectorAll("[data-i18n]");
-    for (const el of elements) {
-      const original = el.getAttribute("data-i18n");
-      el.textContent = await translateText(original, targetLang);
-    }
-
-    const inputs = document.querySelectorAll("[data-i18n-placeholder]");
-    for (const input of inputs) {
-      const original = input.getAttribute("data-i18n-placeholder");
-      input.placeholder = await translateText(original, targetLang);
-    }
-  }
-
-  function toggleLanguage() {
-    const btn = document.querySelector(".lang-switch");
-    if (lang === "pt") {
-      lang = "en";
-      btn.innerHTML = "<span>🌐</span> EN";
-    } else {
-      lang = "pt";
-      btn.innerHTML = "<span>🌐</span> PT-BR";
-    }
-    translatePage(lang);
-  }
-
-  // ===== Formulário =====
-  const form = document.getElementById("registerForm");
-  const feedback = document.getElementById("registerFeedback");
-  feedback.style.display = "none";
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const nome = form.name.value.trim();
-    const email = form.email.value.trim();
-    const senha = form.password.value.trim();
-    const confirmar = form.confirm.value.trim();
-
-    if (!senha || !confirmar) {
-      feedback.textContent = lang === "pt" ? "Preencha as senhas." : "Fill in the passwords.";
-      feedback.style.display = "block";
-      return;
-    }
-
-    if (senha !== confirmar) {
-      feedback.textContent = lang === "pt" ? "As senhas não conferem." : "Passwords do not match.";
-      feedback.style.display = "block";
-      return;
-    }
-
-    feedback.style.display = "none";
-
-    // ====== Envio para API ======
-    const usuario = {
-      nome: nome,
-      nomeUsuario: email.split("@")[0],
-      email: email,
-      senha: senha,
-      funcao: "Usuário",
-      setor: "TI",
-      matricula: Math.floor(Math.random() * 999999).toString().padStart(6, "0"),
-    };
-
-    try {
-      const response = await fetch("http://localhost:5018/api/Usuarios", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(usuario),
-      });
-
-      if (response.ok) {
-        alert(lang === "pt" ? "Usuário cadastrado com sucesso!" : "User registered successfully!");
-        form.reset();
-        window.location.href = "index.html";
-      } else {
-        const msg = await response.text();
-        alert(lang === "pt" ? `Erro ao cadastrar: ${msg}` : `Error while registering: ${msg}`);
+    async function translateText(text, targetLang) {
+      if (targetLang === "pt") return text;
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.responseData.translatedText || text;
+      } catch (e) {
+        console.error("Erro de tradução:", e);
+        return text;
       }
-    } catch (error) {
-      console.error("Erro:", error);
-      alert(lang === "pt" ? "Falha ao conectar com a API." : "Failed to connect to the API.");
     }
-  });
-</script>
 
+    async function translatePage(targetLang) {
+      const elements = document.querySelectorAll("[data-i18n]");
+      for (const el of elements) {
+        const original = el.getAttribute("data-i18n");
+        el.textContent = await translateText(original, targetLang);
+      }
+
+      const inputs = document.querySelectorAll("[data-i18n-placeholder]");
+      for (const input of inputs) {
+        const original = input.getAttribute("data-i18n-placeholder");
+        input.placeholder = await translateText(original, targetLang);
+      }
+    }
+
+    function toggleLanguage() {
+      const langText = document.getElementById("langText");
+      if (lang === "pt") {
+        lang = "en";
+        langText.textContent = "EN";
+      } else {
+        lang = "pt";
+        langText.textContent = "PT-BR";
+      }
+      translatePage(lang);
+    }
+
+    // Formulário
+    const form = document.getElementById("registerForm");
+    const feedback = document.getElementById("registerFeedback");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nome = form.name.value.trim();
+      const email = form.email.value.trim();
+      const senha = form.password.value.trim();
+      const confirmar = form.confirm.value.trim();
+
+      feedback.classList.remove("show");
+
+      if (!nome || !email || !senha || !confirmar) {
+        feedback.textContent = lang === "pt" ? "Preencha todos os campos." : "Fill in all fields.";
+        feedback.classList.add("show");
+        return;
+      }
+
+      if (senha !== confirmar) {
+        feedback.textContent = lang === "pt" ? "As senhas não conferem." : "Passwords do not match.";
+        feedback.classList.add("show");
+        return;
+      }
+
+      // Envio para API
+      const usuario = {
+        nome: nome,
+        nomeUsuario: email.split("@")[0],
+        email: email,
+        senha: senha,
+        funcao: "Usuário",
+        setor: "TI",
+        matricula: Math.floor(Math.random() * 999999).toString().padStart(6, "0"),
+      };
+
+      try {
+        const response = await fetch("http://localhost:5018/api/Usuarios", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(usuario),
+        });
+
+        if (response.ok) {
+          alert(lang === "pt" ? "Usuário cadastrado com sucesso!" : "User registered successfully!");
+          form.reset();
+          window.location.href = "index.html";
+        } else {
+          const msg = await response.text();
+          feedback.textContent = lang === "pt" ? `Erro: ${msg}` : `Error: ${msg}`;
+          feedback.classList.add("show");
+        }
+      } catch (error) {
+        console.error("Erro:", error);
+        feedback.textContent = lang === "pt" ? "Falha ao conectar com a API." : "Failed to connect to the API.";
+        feedback.classList.add("show");
+      }
+    });
+  </script>
 </body>
 </html>

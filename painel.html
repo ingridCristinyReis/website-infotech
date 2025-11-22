@@ -4,500 +4,617 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>InfoTech - Dashboard</title>
-  <link rel="stylesheet" href="style.css">
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #f1f5f9;
       height: 100vh;
-      background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
-      color: #fff;
       overflow: hidden;
     }
-
+    .container {
+      display: flex;
+      height: 100vh;
+    }
     /* Sidebar */
     .sidebar {
       width: 240px;
-      background: rgba(30,41,59,0.95);
-      color: #fff;
+      background: rgba(30,41,59,0.96);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(255,255,255,0.1);
       display: flex;
       flex-direction: column;
-      padding: 15px;
-      transition: all 0.3s ease;
+      padding: 20px 16px;
+      z-index: 10;
     }
-
     .sidebar h2 {
-      margin: 0 0 20px;
-      font-size: 18px;
+      margin: 0 0 16px;
+      font-size: 20px;
+      font-weight: 700;
       text-align: center;
-      letter-spacing: 1px;
+      color: #38bdf8;
+      letter-spacing: 2px;
     }
-
     .sidebar input {
       width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      margin-bottom: 12px;
-      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(15,23,42,0.6);
+      color: #f1f5f9;
+      font-size: 13px;
+      margin-bottom: 16px;
+      transition: all 0.3s;
     }
-
+    .sidebar input:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.2);
+    }
     .sidebar ul {
       list-style: none;
       padding: 0;
+      margin: 0;
     }
-
     .sidebar ul li {
-      margin: 8px 0;
+      margin: 6px 0;
     }
-
     .sidebar ul li a {
-      color: #fff;
+      color: #cbd5e1;
       text-decoration: none;
-      display: block;
-      padding: 10px;
-      border-radius: 6px;
-      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-size: 14px;
     }
-
     .sidebar ul li a:hover {
-      background: #334155;
+      background: rgba(56,189,248,0.1);
+      color: #38bdf8;
     }
-
+    .sidebar ul li a.active {
+      background: rgba(56,189,248,0.15);
+      color: #38bdf8;
+      font-weight: 600;
+    }
     .settings {
       margin-top: auto;
-      border-top: 1px solid rgba(255,255,255,0.2);
-      padding-top: 10px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
-
     .settings button {
       background: none;
       border: none;
-      color: #fff;
+      color: #94a3b8;
       font-size: 14px;
       cursor: pointer;
       padding: 10px;
       width: 100%;
       text-align: left;
+      border-radius: 6px;
+      transition: all 0.3s;
     }
-
+    .settings button:hover {
+      background: rgba(56,189,248,0.1);
+      color: #38bdf8;
+    }
     .dropdown-content {
       display: none;
       flex-direction: column;
-      background: #334155;
-      margin-top: 5px;
-      border-radius: 6px;
+      background: rgba(15,23,42,0.9);
+      margin-top: 8px;
+      border-radius: 8px;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
     }
-
     .dropdown-content a {
-      color: #fff;
+      color: #cbd5e1;
       text-decoration: none;
-      padding: 10px;
-      font-size: 14px;
+      padding: 10px 14px;
+      font-size: 13px;
+      transition: all 0.3s;
+      cursor: pointer;
     }
-
     .dropdown-content a:hover {
-      background: #475569;
+      background: rgba(56,189,248,0.1);
+      color: #38bdf8;
     }
-
-    .show {
-      display: flex;
-    }
-
-    /* Conteúdo */
+    .show { display: flex; }
+    
+    /* Content */
     .content {
       flex: 1;
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      overflow-y: auto;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 16px;
+      overflow: hidden;
     }
-
-    .cards {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 12px 10px;
-      flex: 1 1 200px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      max-width: 300px;
-      min-width: 220px;
-      height: 120px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .card h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
+    
+    .header h1 {
+      margin: 0 0 4px 0;
+      font-size: 24px;
+      font-weight: 700;
       color: #f1f5f9;
     }
-
+    .header p {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: rgba(30,41,59,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(56,189,248,0.2);
+      border-color: rgba(56,189,248,0.3);
+    }
+    .card h3 {
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
     .card p {
       margin: 0;
-      font-size: 22px;
-      font-weight: bold;
+      font-size: 28px;
+      font-weight: 700;
       color: #38bdf8;
     }
-
-    .charts {
+    
+    .main-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
+      grid-template-columns: 1fr 1fr 400px;
+      gap: 16px;
+      overflow: hidden;
+      min-height: 0;
     }
-
+    
     .chart-box {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      padding: 15px;
+      background: rgba(30,41,59,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
       display: flex;
       flex-direction: column;
-      min-height: 220px;
+      min-height: 0;
     }
-
+    .chart-box h3 {
+      margin: 0 0 12px 0;
+      font-size: 15px;
+      color: #f1f5f9;
+      font-weight: 600;
+    }
     .chart-box canvas {
-      max-height: 240px;
+      flex: 1;
+      min-height: 0;
     }
-
+    
     .problems {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      padding: 15px;
-      max-height: 260px;
+      background: rgba(30,41,59,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
       overflow-y: auto;
+      min-height: 0;
     }
-
-    .problems::-webkit-scrollbar {
-      width: 8px;
+    .problems h3 {
+      margin: 0 0 12px 0;
+      font-size: 15px;
+      color: #f1f5f9;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      background: rgba(30,41,59,0.95);
+      padding-bottom: 12px;
+      z-index: 1;
     }
-    .problems::-webkit-scrollbar-thumb {
-      background-color: rgba(255,255,255,0.3);
-      border-radius: 4px;
-    }
-    .problems::-webkit-scrollbar-thumb:hover {
-      background-color: rgba(255,255,255,0.5);
-    }
-
+    .problems::-webkit-scrollbar { width: 6px; }
+    .problems::-webkit-scrollbar-track { background: rgba(15,23,42,0.5); }
+    .problems::-webkit-scrollbar-thumb { background: rgba(56,189,248,0.3); border-radius: 4px; }
+    
     .problem-card {
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(255,255,255,0.05);
       padding: 12px;
       margin-bottom: 10px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+    .problem-card:hover {
+      background: rgba(15,23,42,0.8);
+      border-color: rgba(56,189,248,0.2);
+    }
+    .problem-card p {
+      margin: 4px 0;
+      color: #cbd5e1;
+      font-size: 12px;
+    }
+    .problem-card strong { color: #38bdf8; }
+    
+    @media (max-width: 1400px) {
+      .main-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      .problems { grid-column: 1 / -1; }
+    }
+    
+    @media (max-width: 768px) {
+      .container { flex-direction: column; }
+      .sidebar { width: 100%; padding: 12px; flex-direction: row; }
+      .main-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>INFOTECH</h2>
-    <input type="text" placeholder="Procurar">
-
-    <ul>
-      <li><a href="painel.html">Painel Dashboard</a></li>
-      <li><a href="chamados.html">Chamados</a></li>
-      <li><a href="relatorio.html">Relatórios</a></li>
-      <li><a href="tecnico.html">Técnicos</a></li>
-      <li><a href="#">Ajuda</a></li>
-    </ul>
-
-    <div class="settings">
-      <button onclick="toggleDropdown()">⚙ Ajustes</button>
-      <div id="settingsDropdown" class="dropdown-content">
-        <a href="#" onclick="toggleLanguage()">🌐 Mudar idioma</a>
-        <a onclick="logout()">Encerrar sessão</a>
+  <div class="container">
+    <div class="sidebar">
+      <h2>INFOTECH</h2>
+      <input type="text" placeholder="🔍 Procurar...">
+      <ul>
+        <li><a href="painel.html" class="active">Dashboard</a></li>
+        <li><a href="chamados.html">Chamados</a></li>
+        <li><a href="relatorio.html">Relatórios</a></li>
+        <li><a href="tecnico.html">Técnicos</a></li>
+        <li><a href="#">Ajuda</a></li>
+      </ul>
+      <div class="settings">
+        <button onclick="toggleDropdown()">⚙️ Ajustes</button>
+        <div id="settingsDropdown" class="dropdown-content">
+          <a onclick="toggleLanguage()">🌐 Idioma</a>
+          <a onclick="logout()">🚪 Sair</a>
+        </div>
       </div>
     </div>
+
+    <div class="content">
+      <div class="header">
+        <h1 id="welcomeTitle">Bem-vindo ao Painel</h1>
+        <p>Acompanhe seus chamados e relatórios em tempo real</p>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Meus chamados</h3>
+          <p id="meusChamados">0</p>
+        </div>
+        <div class="card">
+          <h3>Concluídos hoje</h3>
+          <p id="concluidosHoje">0</p>
+        </div>
+      </div>
+
+      <div class="main-grid">
+  <div class="chart-box">
+    <h3>📊 Últimos 7 dias</h3>
+    <canvas id="chartChamados"></canvas>
   </div>
+  <div class="chart-box">
+    <h3>📈 Status</h3>
+    <canvas id="chartDepto"></canvas>
+  </div>
+  <div class="problems">
+    <h3>🔔 Recentes</h3>
+    <p style="color: #94a3b8; font-size: 13px;">Carregando...</p>
+  </div>
+</div>
 
-  <div class="content">
-    <h1>Bem-vindo ao Painel</h1>
-    <p>Aqui você pode acompanhar seus chamados, relatórios e técnicos.</p>
-
-    <div class="cards">
-      <div class="card">
-        <h3>Meus chamados</h3>
-        <p id="meusChamados">0</p>
-      </div>
-      <div class="card">
-        <h3>Concluídos hoje</h3>
-        <p id="concluidosHoje">0</p>
-      </div>
-    </div>
-
-    <div class="charts">
-      <div class="chart-box">
-        <h3>Chamados últimos 7 dias</h3>
-        <canvas id="chartChamados"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>Status dos chamados</h3>
-        <canvas id="chartDepto"></canvas>
-      </div>
-    </div>
-
-    <div class="problems">
-      <h3>Problemas recentes</h3>
-      <p>Carregando...</p>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const usuario = JSON.parse(sessionStorage.getItem("usuario")) || JSON.parse(localStorage.getItem("usuario"));
-    if (!usuario) {
-      alert("Sessão expirada. Faça login novamente.");
-      window.location.href = "index.html";
-    }
-
-    document.querySelector("h1").textContent = `Bem-vindo, ${usuario.nomeUsuario || "Usuário"}!`;
-
-    let chartChamados = null;
-
-    async function carregarChamados() {
-      try {
-        // 🧩 Mostra a URL que está sendo chamada
-        const url = `http://localhost:5018/api/Chamados`;
-        console.log("🔍 Buscando:", url);
-
-        const response = await fetch(url);
-        console.log("📦 Status:", response.status);
-
-        if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
-
-        const chamados = await response.json();
-        console.log("✅ Dados recebidos:", chamados);
-
-        // Atualiza cards
-        document.getElementById("meusChamados").textContent = chamados.length;
-        const hoje = new Date().toISOString().split("T")[0];
-        const concluidosHoje = chamados.filter(c =>
-          c.status?.toLowerCase() === "concluido" &&
-          c.dataFechamento &&
-          c.dataFechamento.startsWith(hoje)
-      );
-        document.getElementById("concluidosHoje").textContent = concluidosHoje.length;
-
-        // Atualiza gráficos e lista
-        atualizarGraficoChamados(chamados);
-        atualizarGraficoStatus(chamados);
-        preencherProblemas(chamados);
-
-      } catch (error) {
-        console.error("❌ Erro ao carregar chamados:", error);
-        alert("Não foi possível carregar os chamados.\nVerifique se a API está rodando e o endpoint está correto.");
-      }
-    }
-
-    function preencherProblemas(chamados) {
-      const container = document.querySelector(".problems");
-      container.innerHTML = "<h3>Problemas recentes</h3>";
-
-      if (chamados.length === 0) {
-        container.innerHTML += "<p>Nenhum chamado encontrado.</p>";
-        return;
-      }
-
-      chamados.slice(-5).reverse().forEach(c => {
-  const div = document.createElement("div");
-  div.className = "problem-card";
-
-  // Formata datas (deixa legível no padrão brasileiro)
-  const dataAbertura = c.dataAbertura
-    ? new Date(c.dataAbertura).toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      })
-    : "—";
-
-  const dataFechamento = c.dataFechamento
-    ? new Date(c.dataFechamento).toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      })
-    : "—";
-
-  div.innerHTML = `
-    <p><strong>ID:</strong> #${c.idChamado}</p>
-    <p><strong>Título:</strong> ${c.titulo || "—"}</p>
-    <p><strong>Descrição:</strong> ${c.descricao || "—"}</p>
-    <p><strong>Prioridade:</strong> ${c.prioridade || "—"}</p>
-    <p><strong>Status:</strong> ${c.status || "—"}</p>
-    <p><strong>Data de abertura:</strong> ${dataAbertura}</p>
-    <p><strong>Data de fechamento:</strong> ${dataFechamento}</p>
-  `;
-  container.appendChild(div);
-});
-
-    }
-    
-    function atualizarGraficoChamados(chamados) {
-  const hoje = new Date();
-  const dias = [];
-
-  // Gera lista dos últimos 7 dias
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(hoje);
-    d.setDate(d.getDate() - i);
-    const label = d.toLocaleDateString("pt-BR", { weekday: "short" });
-    const dataISO = d.toISOString().split("T")[0];
-    dias.push({ label, data: dataISO, total: 0 });
+<script>
+  // Verificar sessão
+  const usuario = JSON.parse(sessionStorage.getItem("usuario")) || JSON.parse(localStorage.getItem("usuario"));
+  if (!usuario) {
+    alert("Sessão expirada. Faça login novamente.");
+    window.location.href = "index.html";
   }
 
-  // Conta quantos chamados foram abertos em cada dia
-  chamados.forEach(c => {
-    const dataAbertura = c.dataAbertura?.split("T")[0];
-    const dia = dias.find(d => d.data === dataAbertura);
-    if (dia) dia.total++;
-  });
+  document.getElementById("welcomeTitle").textContent = `Bem-vindo, ${usuario.nome || usuario.nomeUsuario || "Usuário"}!`;
 
-  const labels = dias.map(d => d.label);
-  const valores = dias.map(d => d.total);
-  const ctx = document.getElementById("chartChamados");
+  let chartChamados = null;
+  let chartStatus = null;
 
-  if (chartChamados) {
-    chartChamados.data.labels = labels;
-    chartChamados.data.datasets[0].data = valores;
-    chartChamados.update();
-  } else {
+  // Carregar chamados da API
+  async function carregarChamados() {
+    try {
+      console.log('🔍 Tentando conectar em: http://localhost:5018/api/chamados');
+      
+      const response = await fetch('http://localhost:5018/api/chamados');
+      
+      console.log('📦 Status HTTP:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const chamados = await response.json();
+      console.log('✅ Chamados carregados:', chamados);
+      console.log('📊 Total de chamados:', chamados.length);
+
+      // Atualizar cards
+      document.getElementById("meusChamados").textContent = chamados.length;
+      
+      const hoje = new Date().toISOString().split("T")[0];
+      console.log('📅 Data de hoje:', hoje);
+      
+      const concluidosHoje = chamados.filter(c => {
+        const statusMatch = c.status && (
+          c.status.toLowerCase().includes('conclu') ||
+          c.status.toLowerCase().includes('fechado') ||
+          c.status.toLowerCase().includes('finalizado')
+        );
+        const dataMatch = c.dataFechamento && c.dataFechamento.startsWith(hoje);
+        return statusMatch && dataMatch;
+      });
+      
+      console.log('✔️ Concluídos hoje:', concluidosHoje.length);
+      document.getElementById("concluidosHoje").textContent = concluidosHoje.length;
+
+      // Atualizar gráficos e lista
+      atualizarGraficoChamados(chamados);
+      atualizarGraficoStatus(chamados);
+      preencherProblemas(chamados);
+
+    } catch (error) {
+      console.error("❌ ERRO DETALHADO:", error);
+      console.error("❌ Nome do erro:", error.name);
+      console.error("❌ Mensagem:", error.message);
+      
+      document.querySelector(".problems").innerHTML = `
+        <h3>🔔 Recentes</h3>
+        <div style="color: #f87171; font-size: 13px; padding: 12px; background: rgba(239,68,68,0.1); border-radius: 8px; border: 1px solid rgba(239,68,68,0.3);">
+          <p style="margin: 0 0 8px 0; font-weight: 600;">⚠️ Erro ao carregar dados da API</p>
+          <p style="margin: 0; font-size: 12px;">Verifique se:</p>
+          <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px;">
+            <li>A API está rodando em odede>http://localhost:5018</code></li>
+            <li>O endpoint <code>/api/chamados</code> está correto</li>
+            <li>CORS está configurado no backend</li>
+          </ul>
+          <p style="margin: 8px 0 0 0; font-size: 11px; color: #fca5a5;">Erro: ${error.message}</p>
+        </div>
+      `;
+      
+      // Mostrar valores padrão nos cards
+      document.getElementById("meusChamados").textContent = "—";
+      document.getElementById("concluidosHoje").textContent = "—";
+    }
+  }
+
+  function preencherProblemas(chamados) {
+    const container = document.querySelector(".problems");
+    container.innerHTML = "<h3>🔔 Recentes</h3>";
+
+    if (!chamados || chamados.length === 0) {
+      container.innerHTML += "<p style='color:#94a3b8; font-size:13px;'>Nenhum chamado encontrado.</p>";
+      return;
+    }
+
+    const ultimosChamados = chamados.slice(-8).reverse();
+    console.log('📋 Mostrando últimos', ultimosChamados.length, 'chamados');
+
+    ultimosChamados.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "problem-card";
+      
+      const dataAbertura = c.dataAbertura 
+        ? new Date(c.dataAbertura).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })
+        : "—";
+      
+      div.innerHTML = `
+        <p><strong>#${c.idChamado}</strong> - ${c.titulo || "Sem título"}</p>
+        <p style="font-size:11px; color:#94a3b8;">
+          ${c.status || "—"} • ${c.prioridade || "—"} • ${dataAbertura}
+        </p>
+      `;
+      container.appendChild(div);
+    });
+  }
+  
+  function atualizarGraficoChamados(chamados) {
+    console.log('📊 Criando gráfico de chamados...');
+    
+    const hoje = new Date();
+    const dias = [];
+
+    // Gerar últimos 7 dias
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(hoje);
+      d.setDate(d.getDate() - i);
+      const label = d.toLocaleDateString("pt-BR", { weekday: "short" });
+      const dataISO = d.toISOString().split("T")[0];
+      dias.push({ label, data: dataISO, total: 0 });
+    }
+
+    // Contar chamados por dia
+    chamados.forEach(c => {
+      const dataAbertura = c.dataAbertura?.split("T")[0];
+      const dia = dias.find(d => d.data === dataAbertura);
+      if (dia) dia.total++;
+    });
+
+    console.log('📊 Dados do gráfico:', dias);
+
+    const labels = dias.map(d => d.label);
+    const valores = dias.map(d => d.total);
+    const ctx = document.getElementById("chartChamados");
+
+    if (!ctx) {
+      console.error('❌ Canvas "chartChamados" não encontrado!');
+      return;
+    }
+
+    if (chartChamados) {
+      chartChamados.destroy();
+    }
+
     chartChamados = new Chart(ctx, {
       type: "bar",
       data: {
         labels,
         datasets: [{
-          label: "Chamados abertos",
+          label: "Chamados",
           data: valores,
-          backgroundColor: "#38bdf8"
+          backgroundColor: "#38bdf8",
+          borderRadius: 6
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
-
-        // 💥 Aqui adicionamos o clique no gráfico
-        onClick: (event, elements) => {
-          if (elements.length > 0) {
-            const index = elements[0].index;
-            const diaSelecionado = dias[index].data;
-            filtrarChamadosPorData(chamados, diaSelecionado);
+        plugins: { 
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Chamados: ${context.parsed.y}`;
+              }
+            }
+          }
+        },
+        scales: { 
+          y: { 
+            beginAtZero: true, 
+            ticks: { 
+              precision: 0, 
+              color: '#94a3b8', 
+              font: { size: 11 } 
+            },
+            grid: {
+              color: 'rgba(148,163,184,0.1)'
+            }
+          },
+          x: { 
+            ticks: { 
+              color: '#94a3b8', 
+              font: { size: 11 } 
+            },
+            grid: {
+              display: false
+            }
           }
         }
       }
     });
-  }
-}
-// 🔹 Nova função: filtra chamados do dia clicado
-function filtrarChamadosPorData(chamados, dataSelecionada) {
-  const filtrados = chamados.filter(c =>
-    c.dataAbertura?.startsWith(dataSelecionada)
-  );
-
-  // Atualiza contadores
-  document.getElementById("meusChamados").textContent = filtrados.length;
-  const concluidosDia = filtrados.filter(c => c.status?.toLowerCase() === "concluido");
-  document.getElementById("concluidosHoje").textContent = concluidosDia.length;
-
-  // Atualiza a lista de problemas
-  const container = document.querySelector(".problems");
-  container.innerHTML = `
-    <h3>Chamados de ${new Date(dataSelecionada).toLocaleDateString("pt-BR")}
-      <button onclick="carregarChamados()" style="
-        float:right;
-        background:#38bdf8;
-        border:none;
-        color:#fff;
-        border-radius:6px;
-        padding:4px 8px;
-        cursor:pointer;
-      ">Voltar</button>
-    </h3>
-  `;
-
-  if (filtrados.length === 0) {
-    container.innerHTML += "<p>Nenhum chamado encontrado neste dia.</p>";
-    return;
+    
+    console.log('✅ Gráfico de chamados criado');
   }
 
-  filtrados.reverse().forEach(c => {
-    const dataAbertura = new Date(c.dataAbertura).toLocaleString("pt-BR", {
-      day: "2-digit", month: "2-digit", year: "numeric",
-      hour: "2-digit", minute: "2-digit"
+  function atualizarGraficoStatus(chamados) {
+    console.log('📈 Criando gráfico de status...');
+    
+    const ctx = document.getElementById("chartDepto");
+    
+    if (!ctx) {
+      console.error('❌ Canvas "chartDepto" não encontrado!');
+      return;
+    }
+    
+    const statusCount = {};
+    
+    chamados.forEach(c => {
+      const status = c.status || "Indefinido";
+      statusCount[status] = (statusCount[status] || 0) + 1;
     });
-    const dataFechamento = c.dataFechamento
-      ? new Date(c.dataFechamento).toLocaleString("pt-BR", {
-          day: "2-digit", month: "2-digit", year: "numeric",
-          hour: "2-digit", minute: "2-digit"
-        })
-      : "—";
 
-    const div = document.createElement("div");
-    div.className = "problem-card";
-    div.innerHTML = `
-      <p><strong>ID:</strong> #${c.idChamado}</p>
-      <p><strong>Título:</strong> ${c.titulo || "—"}</p>
-      <p><strong>Descrição:</strong> ${c.descricao || "—"}</p>
-      <p><strong>Prioridade:</strong> ${c.prioridade || "—"}</p>
-      <p><strong>Status:</strong> ${c.status || "—"}</p>
-      <p><strong>Data de abertura:</strong> ${dataAbertura}</p>
-      <p><strong>Data de fechamento:</strong> ${dataFechamento}</p>
-    `;
-    container.appendChild(div);
-  });
-}
+    console.log('📈 Status contados:', statusCount);
 
-    // 🔹 Gráfico de status (pizza)
-    function atualizarGraficoStatus(chamados) {
-      const ctx = document.getElementById("chartDepto");
-      const statusCount = {};
-      chamados.forEach(c => {
-        const status = c.status || "Indefinido";
-        statusCount[status] = (statusCount[status] || 0) + 1;
-      });
-
-      new Chart(ctx, {
-        type: "pie",
-        data: {
-          labels: Object.keys(statusCount),
-          datasets: [{
-            data: Object.values(statusCount),
-            backgroundColor: ["#0ea5e9", "#22c55e", "#f97316", "#e11d48"]
-          }]
-        },
-        options: { responsive: true, plugins: { legend: { position: "bottom" } } }
-      });
+    if (chartStatus) {
+      chartStatus.destroy();
     }
 
-    function toggleDropdown() {
-      document.getElementById("settingsDropdown").classList.toggle("show");
-    }
+    chartStatus = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: Object.keys(statusCount),
+        datasets: [{
+          data: Object.values(statusCount),
+          backgroundColor: ["#38bdf8", "#22c55e", "#fbbf24", "#f87171"],
+          borderWidth: 0
+        }]
+      },
+      options: { 
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+          legend: { 
+            position: "bottom",
+            labels: { 
+              color: '#cbd5e1', 
+              padding: 10, 
+              font: { size: 11 },
+              usePointStyle: true
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.parsed || 0;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = ((value / total) * 100).toFixed(1);
+                return `${label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    console.log('✅ Gráfico de status criado');
+  }
 
-    function logout() {
-      localStorage.removeItem("usuario");
-      localStorage.removeItem("keepLogin");
-      localStorage.setItem("forceLogout", "true");
-      window.location.href = "index.html";
-    }
+  function toggleDropdown() {
+    document.getElementById("settingsDropdown").classList.toggle("show");
+  }
 
+  function logout() {
+    console.log('🚪 Fazendo logout...');
+    localStorage.removeItem("usuario");
+    sessionStorage.removeItem("usuario");
+    localStorage.removeItem("keepLogin");
+    window.location.href = "index.html";
+  }
+
+  function toggleLanguage() {
+    alert("Funcionalidade de tradução será implementada em breve!");
+  }
+
+  // Iniciar carregamento quando página carregar
+  console.log('🚀 Iniciando dashboard...');
+  carregarChamados();
+
+  // Recarregar a cada 30 segundos
+  setInterval(() => {
+    console.log('🔄 Atualizando dados...');
     carregarChamados();
-  </script>
+  }, 30000);
+</script>
+
 </body>
 </html>
