@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InfoTech - Recuperar Senha</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .lang-switch {
+      position: fixed;
+      top: 15px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      width: 10%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .lang-switch:hover {
+      background: rgba(0, 255, 170, 0.25);
+      transform: scale(1.05);
+    }
+    .lang-switch span {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Botão de idioma -->
+  <button class="lang-switch" onclick="toggleLanguage()">
+    <span>🌐</span> PT-BR
+  </button>
+
+  <div class="page-bg">
+    <div class="card" style="width: 550px; height: auto; padding: 40px; justify-content: center;">
+      <div style="width: 100%; max-width: 380px; text-align: center;">
+        <h2 class="title" data-i18n="Esqueceu a Senha">Esqueceu a Senha</h2>
+        <p class="subtitle" data-i18n="Nos conte algumas informações sobre sua conta">
+          Nos conte algumas informações sobre sua conta
+        </p>
+
+        <form id="recoverForm">
+          <label for="phone" style="font-size: 13px;" data-i18n="INSIRA SEU NÚMERO DE TELEFONE">
+            INSIRA SEU NÚMERO DE TELEFONE
+          </label>
+          <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
+            <select id="country-code" style="padding: 10px; border: none; border-radius: 6px; background-color: #e6e6e6; color: #000; font-weight: 600;">
+              <option value="+55">Brasil +55</option>
+              <option value="+1">EUA +1</option>
+              <option value="+351">Portugal +351</option>
+            </select>
+            <input type="text" id="phone" placeholder="(11) 99999-9999" 
+                   data-i18n-placeholder="(11) 99999-9999"
+                   style="flex: 1; padding: 10px; border: none; border-radius: 6px; background: white; color: black;">
+          </div>
+
+          <p class="subtitle" style="font-size: 13px; color: #c8d8e4; margin-bottom: 10px;" 
+             data-i18n="Lhe enviaremos uma mensagem de texto com um código para confirmar seu número.">
+             Lhe enviaremos uma mensagem de texto com um código para confirmar seu número.
+          </p>
+
+          <div class="divider">
+            <hr><span data-i18n="OU">OU</span><hr>
+          </div>
+
+          <input type="email" id="email" placeholder="usuario@gmail.com"
+                 data-i18n-placeholder="usuario@gmail.com"
+                 style="width: 100%; padding: 10px; border: none; border-radius: 6px; background: white; color: black;">
+
+          <div class="feedback" id="feedback" data-i18n="Informe um e-mail ou telefone válido!">
+            Informe um e-mail ou telefone válido!
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px;">
+            <div class="infotech">
+              <div class="info">INFO</div>
+              <div class="tech">TECH</div>
+            </div>
+            <button type="submit" class="login-btn" style="width: auto; min-width: 100px;" data-i18n="enviar">enviar</button>
+          </div>
+
+          <div class="links" style="margin-top: 15px;">
+            <a href="index.html" data-i18n="Voltar ao login">Voltar ao login</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let lang = "pt";
+
+    // Função para chamar API MyMemory
+    async function translateText(text, targetLang) {
+      if (targetLang === "pt") return text;
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=pt|${targetLang}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.responseData.translatedText || text;
+      } catch (e) {
+        console.error("Erro de tradução:", e);
+        return text;
+      }
+    }
+
+    async function translatePage(targetLang) {
+      const elements = document.querySelectorAll("[data-i18n]");
+      for (const el of elements) {
+        const original = el.getAttribute("data-i18n");
+        el.textContent = await translateText(original, targetLang);
+      }
+
+      const inputs = document.querySelectorAll("[data-i18n-placeholder]");
+      for (const input of inputs) {
+        const original = input.getAttribute("data-i18n-placeholder");
+        input.placeholder = await translateText(original, targetLang);
+      }
+    }
+
+    function toggleLanguage() {
+      const btn = document.querySelector(".lang-switch");
+      if (lang === "pt") {
+        lang = "en";
+        btn.innerHTML = "<span>🌐</span> EN";
+      } else {
+        lang = "pt";
+        btn.innerHTML = "<span>🌐</span> PT-BR";
+      }
+      translatePage(lang);
+    }
+
+    // Validação do formulário
+    const form = document.getElementById('recoverForm');
+    const feedback = document.getElementById('feedback');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (phone === "" && email === "") {
+        feedback.classList.add("show");
+        feedback.textContent = (lang === "pt") 
+          ? "Informe um e-mail ou telefone válido!" 
+          : "Please enter a valid email or phone!";
+      } else {
+        feedback.classList.remove("show");
+        alert(lang === "pt" 
+          ? "Link de recuperação enviado com sucesso!" 
+          : "Recovery link sent successfully!");
+        form.reset();
+      }
+    });
+  </script>
+</body>
+</html>
